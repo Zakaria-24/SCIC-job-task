@@ -1,3 +1,19 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.sorting {
+    margin-bottom: 20px;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+  
+  .sorting label {
+    font-weight: bold;
+  }
+  
+  .sorting select {
+    padding: 5px;
+  }
+  

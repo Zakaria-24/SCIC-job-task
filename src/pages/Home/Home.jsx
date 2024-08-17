@@ -1,8 +1,6 @@
 import axios from "axios";
 import { Button } from "flowbite-react";
 import Product from "../../components/Product";
-// import axios from 'axios';
-// import { useQuery } from '@tanstack/react-query';
 
 
 
@@ -25,37 +23,6 @@ const Home = () => {
   const [isLoading, setIsLoading] = useState(true);
 
   const baseUrl = import.meta.env.VITE_API_URL;
-
-  // const { isLoading, data: products = [] } = useQuery({
-  //   queryKey: ["products", search, sortOption],
-  //   queryFn: () => getQueries(),
-  // });
-
-  // const getQueries = async () => {
-  //   const { data } = await axios.get(`${baseUrl}/products`);
-  //   return data;
-  // };
-
-  // Search for queries by Product Name
-  // const handler = (e) => {
-  //   e.preventDefault();
-  //   const text = e.target.search.value;
-  //   setSearch(text);
-  //   console.log(e.target.dropdown.value);
-  // };
-
-
-  // if (isLoading) return <h1>Loading....</h1>;
-  // if (isError) return <h1>Error loading data!!!</h1>;
-
-
-
-  // const apiUrl =
-  //   `${baseUrl}/products?` +
-  //   `${category ? `category=${category}&` : ""}` +
-  //   `${search ? `search=${search}&` : ""}` +
-  //   `${brand_name ? `brand_name=${brand_name}&` : ""}` +
-  //   `${sortOrder ? `sortOrder=${sortOrder}&` : ""}`;
 
   const apiUrl =
     `${baseUrl}/products?` +

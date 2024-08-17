@@ -1,32 +1,38 @@
 import { Button } from "flowbite-react";
 import Product from "../../components/Product";
-
 import axios from 'axios';
 import { useQuery } from '@tanstack/react-query';
-
 import { Pagination } from "flowbite-react";
 import { useState } from "react";
 
 const Home = () => {
   const [currentPage, setCurrentPage] = useState(1);
-  const onPageChange = (page) => setCurrentPage(page);
+  const onPageChange = (page) => {
+    setCurrentPage(page);
+  };
+  const [search, setSearch] = useState("");
+  // const [category, setCategory] = useState("");
+  // const [brand_name, setBrand] = useState("");
+  const [sortOption, setSortOption] = useState("");
 
   const baseUrl = import.meta.env.VITE_API_URL;
 
-  const { data: products = [], isLoading, isError } = useQuery({
-    queryKey: ["products"],
+  const { isLoading, data: products = [] } = useQuery({
+    queryKey: ["products", search, sortOption],
     queryFn: () => getQueries(),
   });
-  // console.log(queries, isLoading);
 
   const getQueries = async () => {
-    const { data } = await axios(`${baseUrl}/products`);
-    // console.log(data);
+    const { data } = await axios.get(`${baseUrl}/products?search=${search}`);
     return data;
   };
 
+  
+
+  
   if (isLoading) return <h1>Loading....</h1>;
-  if (isError) return <h1>Error loading data!!!</h1>;
+  // if (isError) return <h1>Error loading data!!!</h1>;
+  console.log(products?.products?.length)
 
 
   return (
@@ -42,26 +48,81 @@ const Home = () => {
                 </svg>
               </button>
             </span>
-            <input type="search" name="Search" placeholder="Search..." className="w-32 py-3 pl-10 text-sm rounded-md sm:w-auto focus:outline-none dark:bg-gray-100 dark:text-gray-800 focus:dark:bg-gray-50" />
+            <input
+              type="search"
+              name="Search"
+              placeholder="Search..."
+              className="w-32 py-3 pl-10 text-sm rounded-md sm:w-auto focus:outline-none dark:bg-gray-100 dark:text-gray-800 focus:dark:bg-gray-50"
+              value={setSearch}
+              onChange={(e) => setSearch(e.target.value)}
+            />
+
           </div>
         </div>
 
-        <select className="select select-success w-full max-w-xs">
+        {/* <select className="select select-success w-full max-w-xs" onChange={(e) => setCategory(e.target.value)}>
           <option disabled selected>All Categories</option>
-          <option>One Piece</option>
-        </select>
-        <select className="select select-success w-full max-w-xs">
+          <option>Fashion</option>
+          <option>Electronics</option>
+          <option>Nature</option>
+          <option>Travel</option>
+          <option>Stock</option>
+          <option>Abstract</option>
+          <option>Wildlife</option>
+          <option>Photography</option>
+          <option>Lifestyle</option>
+          <option>Vintage</option>
+          <option>Sports</option>
+          <option>Decor</option>
+          <option>Artwork</option>
+          <option>Science</option>
+          <option>Health</option>
+          <option>Art</option>
+        </select> */}
+        {/* <select className="select select-success w-full max-w-xs" onChange={(e) => setBrand(e.target.value)}>
           <option disabled selected>All Brand</option>
-          <option>One Piece</option>
-        </select>
-        <select className="select select-success w-full max-w-xs">
+          <option>ShineWear</option>
+          <option>ElectroMax</option>
+          <option>NaturePix</option>
+          <option>Wanderlust</option>
+          <option>Stockify</option>
+          <option>Artistry</option>
+          <option>WildLens</option>
+          <option>PixelPerfect</option>
+          <option>LifeLens</option>
+          <option>RetroClicks</option>
+          <option>SportyShots</option>
+          <option>DecoArt</option>
+          <option>CreativeCanvas</option>
+          <option>TDPhoto</option>
+          <option>OlenkaStyle</option>
+          <option>Pixabay</option>
+          <option>FergusonClicks</option>
+          <option>KarolinaDesign</option>
+          <option>LabLens</option>
+          <option>Elevate</option>
+          <option>MughalClicks</option>
+          <option>ShinyDiamond</option>
+          <option>JibaroArt</option>
+          <option>LaryssaLens</option>
+          <option>Eprism</option>
+          <option>GabrielStyle</option>
+          <option>MathArt</option>
+        </select> */}
+        <select className="select select-success w-full max-w-xs" onChange={(e) => setSortOption(e.target.value)}>
           <option disabled selected>Sort by</option>
           <option>Newest First</option>
           <option>Price: Low to High</option>
           <option>Price: High to Low</option>
         </select>
         <div>
-          <Button type="submit" color="warning">Reset</Button>
+        <Button type="button" color="warning" onClick={() => {
+            setSearch('');
+            // setCategory('');
+            // setBrand('');
+            setSortOption('');
+            setCurrentPage(1);
+          }}>Reset</Button>
         </div>
       </div>
 
@@ -69,9 +130,10 @@ const Home = () => {
       <section>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-4">
           {/* <Product></Product> */}
-          {products?.map((product) => (
-            <Product key={product._id} product={product} />
-          ))}
+          {!isLoading && (products?.products?.map((product) => (
+          
+            <Product  key={product?._id} product={product} />
+          )))}
         </div>
       </section>
 

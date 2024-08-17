@@ -11,6 +11,8 @@ export default {
     extend: {},
   },
   plugins: [
+    require('daisyui'),
     flowbite.plugin(),
+
   ],
 }

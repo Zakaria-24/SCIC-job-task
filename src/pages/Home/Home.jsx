@@ -4,23 +4,30 @@ import Product from "../../components/Product";
 
 
 
-import { Pagination } from "flowbite-react";
+// import { Pagination } from "flowbite-react";
 import { useEffect, useState } from "react";
 
+import ReactPaginate from "react-paginate";
+import "./pagination.css";
 const Home = () => {
-  const [currentPage, setCurrentPage] = useState(1);
-  const onPageChange = (page) => {
-    setCurrentPage(page);
-  };
+  // const [currentPage, setCurrentPage] = useState(1);
+  // const onPageChange = (page) => {
+  //   setCurrentPage(page);
+  // };
+  // console.log(currentPage)
 
+  const [currentPage, setCurrentPage] = useState(0);
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("");
   const [brand_name, setBrand] = useState("");
   const [sortOrder, setSortOrder] = useState("");
-  console.log(category, search, brand_name, sortOrder);
-
   const [products, setProducts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [totalCount, setTotalCount] = useState(0);
+
+  const itemsPerPage = 9;
+  const numberOfPages = Math.ceil(totalCount / itemsPerPage);
+  console.log(numberOfPages)
 
   const baseUrl = import.meta.env.VITE_API_URL;
 
@@ -29,33 +36,41 @@ const Home = () => {
     `${category ? `category=${category}&` : ""}` +
     `${search ? `search=${search}&` : ""}` +
     `${brand_name ? `brand_name=${brand_name}&` : ""}` +
-    `${sortOrder ? `${sortOrder}&` : ""}`;
+    `${sortOrder ? `${sortOrder}&` : ""}` +
+    `page=${currentPage}&` +
+    `size=${itemsPerPage}`;
 
   // Remove the trailing '&' if it exists
   const finalUrl = apiUrl.slice(-1) === "&" ? apiUrl.slice(0, -1) : apiUrl;
   console.log(finalUrl);
 
 
+
+
   useEffect(() => {
     axios.get(finalUrl)
       .then(function (response) {
         // handle success
-        setProducts(response?.data)
-        console.log(response?.data);
+        setProducts(response?.data?.results)
+        console.log(response?.data?.results)
+        setTotalCount(response?.data?.totalCount);
         setIsLoading(false)
       })
       .catch(function (error) {
         // handle error
         console.log(error);
+        setIsLoading(false);
       })
-  }, [category, search, brand_name, sortOrder]);
+  }, [category, search, brand_name, sortOrder, currentPage]);
 
 
-
+  const handlePageClick = (e) => {
+    setCurrentPage(e.selected);
+  };
 
   return (
     <div className="container mx-auto mt-6">
-
+      {/* search, filter and sort */}
       <div className="flex gap-4">
         <div>
           <div className="relative">
@@ -142,21 +157,6 @@ const Home = () => {
           <option value="GabrielStyle">GabrielStyle</option>
           <option value="MathArt">MathArt</option>
         </select>
-        {/* <select
-          className="select select-success w-full max-w-xs"
-          onChange={(e) => setSortOrder(e.target.value)}
-          // onChange={(e) => console.log(e.target.value)}
-          >
-          <option disabled selected>
-            Sort by
-          </option>
-          <option value="sortBy=date&sortOrder=asc">Newest First</option>
-          <option value="sortBy=date&sortOrder=dsc">Price: Old Product</option>
-          <option value="sortBy=price&sortOrder=desc">
-            Price: High to Low
-          </option>
-          <option value="sortBy=price&sortOrder=asc">Price: Low to High</option>
-        </select> */}
 
         <select
           className="select select-success w-full max-w-xs"
@@ -201,9 +201,26 @@ const Home = () => {
         </div>
       </section>
 
-      <div className="flex overflow-x-auto sm:justify-center mt-6 mb-10">
-        <Pagination currentPage={currentPage} totalPages={100} onPageChange={onPageChange} showIcons />
-      </div>
+      {/* <div className="flex overflow-x-auto sm:justify-center mt-6 mb-10">
+        <Pagination currentPage={currentPage} totalPages={20} onPageChange={onPageChange} showIcons />
+      </div> */}
+
+
+      {/* Pagination */}
+      <ReactPaginate
+        breakLabel="..."
+        nextLabel="next >"
+        onPageChange={handlePageClick}
+        pageRangeDisplayed={5}
+        pageCount={numberOfPages}
+        previousLabel="< previous"
+        renderOnZeroPageCount={null}
+        containerClassName="pagination-container"
+        pageClassName="pagination-list"
+        pageLinkClassName="pagination-anchor"
+        previousLinkClassName="previous-anchor"
+        nextLinkClassName="next-anchor"
+      />
 
     </div>
   );
